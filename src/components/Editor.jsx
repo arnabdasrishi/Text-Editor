@@ -25,7 +25,6 @@ const editorStyle = {
   padding: "1rem",
   marginTop: "2rem",
   backgroundColor: "#fffcd9",
-  fontFamily: "cursive",
 };
 
 const styleMap = {
