@@ -20,3 +20,54 @@
   padding: 1rem;
   letter-spacing: 0.1rem;
 }
+
+/* Desktop styles */
+.header__main {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+}
+
+.editor__box {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .header__main {
+    padding: 0.5rem;
+  }
+
+  .editor__box {
+    padding: 0;
+  }
+
+  .instuctions__main {
+    width: 60%;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  .header__main {
+    /* flex-direction: column; */
+    /* align-items: center; */
+    text-align: center;
+    gap: -2rem;
+    padding: 0.5rem;
+  }
+
+  .editor__box {
+    padding: 0;
+    width: 100%;
+    height: 20rem;
+    margin: 0 auto;
+  }
+
+  .instuctions__main {
+    width: 60%;
+  }
+}

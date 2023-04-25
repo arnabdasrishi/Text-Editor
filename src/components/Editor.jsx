@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "../App.css";
 
 import {
   Editor,
@@ -34,7 +35,22 @@ const styleMap = {
   UNDERLINE: {
     textDecoration: "underline",
   },
+  header: {
+    fontSize: "2.5em",
+    fontWeight: "bold",
+  },
+  BOLD: {
+    fontWeight: "bold",
+  },
 };
+
+function blockStyleFn(contentBlock) {
+  const type = contentBlock.getType();
+  if (type === "header-one") {
+    return "header";
+  }
+  return null;
+}
 
 export default function TextEditor() {
   const toast = useToast();
@@ -66,10 +82,21 @@ export default function TextEditor() {
     } else if (text.startsWith("*** ")) {
       // Apply underline to line
       setActiveStyle("UNDERLINE");
+    } else if (text.startsWith("# ")) {
+      // Apply header-one block type
+      setActiveStyle(null);
+      newEditorState = RichUtils.toggleBlockType(newEditorState, "header-one");
+      newEditorState = removeTriggerCharacter(
+        newEditorState,
+        text.substring(0, 2)
+      );
+      setEditorState(newEditorState);
+      return;
     } else {
       setActiveStyle(null);
     }
 
+    // Move this check after the header block type check
     if (activeStyle) {
       newEditorState = RichUtils.toggleInlineStyle(newEditorState, activeStyle);
     }
@@ -77,7 +104,8 @@ export default function TextEditor() {
     if (
       text.startsWith("* ") ||
       text.startsWith("** ") ||
-      text.startsWith("*** ")
+      text.startsWith("*** ") ||
+      text.startsWith("# ")
     ) {
       newEditorState = removeTriggerCharacter(
         newEditorState,
@@ -151,7 +179,7 @@ export default function TextEditor() {
         className="header__main"
         align="center"
         justify="center"
-        gap="20rem"
+        gap="10rem"
         padding="0.5rem 0"
       >
         <Text>Demo Editor by Arnab</Text>
@@ -159,13 +187,14 @@ export default function TextEditor() {
           Save
         </Button>
       </Flex>
-      <Box style={editorStyle} onClick={focusEditor}>
+      <Box className="editor__box" style={editorStyle} onClick={focusEditor}>
         <Editor
           ref={editor}
           editorState={editorState}
           onChange={handleChange}
           placeholder="Write something!"
           customStyleMap={styleMap}
+          blockStyleFn={blockStyleFn}
         />
       </Box>
     </>
