@@ -1,7 +1,17 @@
-import React from "react";
-import { Editor, EditorState, RichUtils, Modifier } from "draft-js";
+import React, { useEffect } from "react";
+
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  Modifier,
+  convertToRaw,
+  convertFromRaw,
+} from "draft-js";
 import "draft-js/dist/Draft.css";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
+
+import { useToast } from "@chakra-ui/react";
 
 // Look and feel of the editor
 const editorStyle = {
@@ -14,7 +24,7 @@ const editorStyle = {
   padding: "1rem",
   marginTop: "2rem",
   backgroundColor: "#fffcd9",
-  fontFamily:"cursive",
+  fontFamily: "cursive",
 };
 
 const styleMap = {
@@ -27,6 +37,8 @@ const styleMap = {
 };
 
 export default function TextEditor() {
+  const toast = useToast();
+
   const [editorState, setEditorState] = React.useState(() =>
     EditorState.createEmpty()
   );
@@ -108,6 +120,30 @@ export default function TextEditor() {
     return EditorState.push(newEditorState, newContentState, "remove-range");
   }
 
+  // Function for saving the content into localStorage
+  function saveContent() {
+    const contentState = editorState.getCurrentContent();
+    const contentString = JSON.stringify(convertToRaw(contentState));
+    localStorage.setItem("savedEditorContent", contentString);
+
+    toast({
+      title: "Save Successful",
+      description: "Your text have been saved successfully.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+
+  // Load content from local storage
+  useEffect(() => {
+    const savedContent = localStorage.getItem("savedEditorContent");
+    if (savedContent) {
+      const contentState = convertFromRaw(JSON.parse(savedContent));
+      setEditorState(EditorState.createWithContent(contentState));
+    }
+  }, []);
+
   return (
     <>
       {/* Header Section */}
@@ -119,7 +155,7 @@ export default function TextEditor() {
         padding="0.5rem 0"
       >
         <Text>Demo Editor by Arnab</Text>
-        <Button size="md" colorScheme="yellow">
+        <Button size="md" colorScheme="yellow" onClick={saveContent}>
           Save
         </Button>
       </Flex>
